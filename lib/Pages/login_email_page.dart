@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:memory_stitch/Pages/login_email_page.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LoginPageEmail extends StatelessWidget {
+  const LoginPageEmail({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +32,7 @@ class LoginPage extends StatelessWidget {
                   Column(
                     children: [
                       Padding(
-                        padding:
-                            const EdgeInsets.only(right: 2.0), // Jarak kanan
+                        padding: const EdgeInsets.only(right: 2.0),
                         child: Text(
                           'Welcome To',
                           style: TextStyle(
@@ -44,7 +42,7 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 50),
+                      const SizedBox(height: 50),
                     ],
                   ),
                   Column(
@@ -74,63 +72,66 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Logic untuk login dengan Facebook
-                },
-                icon: const Icon(
-                  Icons.facebook,
-                  color: Colors.white,
-                ),
-                label: const Text(
-                  'Continue with Facebook',
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3b5998),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
+                  prefixIcon: const Icon(Icons.email),
                 ),
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
-              ElevatedButton.icon(
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  prefixIcon: const Icon(Icons.lock),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 30),
+              // Tombol Login
+              ElevatedButton(
                 onPressed: () {
-                  // Logic untuk login dengan Google
+                  // Logic untuk login
                 },
-                icon: const Icon(
-                  Icons.email_outlined,
-                  color: Colors.white,
-                ),
-                label: const Text(
-                  'Continue with Google',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFdb4437),
+                  backgroundColor: Colors.black,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPageEmail()),
-                  );
-                },
                 child: const Text(
-                  'Or Use Email',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  'Login',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Don't have an account yet?",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Logic untuk navigasi ke halaman pendaftaran
+                    },
+                    child: const Text(
+                      'Create an Account',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
