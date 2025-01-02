@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPageEmail extends StatelessWidget {
-  const LoginPageEmail({super.key});
+  LoginPageEmail({super.key});
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _loginWithEmailPassword(BuildContext context) async {
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email and password must not be empty.')),
+      );
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login successful!')),
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+    } on FirebaseAuthException catch (e) {
+      String message;
+      if (e.code == 'user-not-found') {
+        message = 'user not found.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password.';
+      } else {
+        message = 'Login failed. Please try again.';
+      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +110,7 @@ class LoginPageEmail extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(
@@ -84,6 +122,7 @@ class LoginPageEmail extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               TextField(
+                controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(
@@ -94,11 +133,8 @@ class LoginPageEmail extends StatelessWidget {
                 obscureText: true,
               ),
               const SizedBox(height: 30),
-              // Tombol Login
               ElevatedButton(
-                onPressed: () {
-                  // Logic untuk login
-                },
+                onPressed: () => _loginWithEmailPassword(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: const Size(double.infinity, 50),
@@ -121,7 +157,7 @@ class LoginPageEmail extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Logic untuk navigasi ke halaman pendaftaran
+                      Navigator.pushNamed(context, '/register');
                     },
                     child: const Text(
                       'Create an Account',
