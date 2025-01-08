@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'model.dart';
+import 'new_scarpbook.dart'; // Import halaman baru
 
 class HomePage extends StatefulWidget {
   @override
@@ -38,8 +39,11 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (index == 1) {
-      // TODO: LOGIC BACKEND UNTUK NAVIGASI KE HALAMAN TAMBAH SCRAPBOOK
-      Navigator.pushNamed(context, '/add-memory');
+      // Navigasi ke halaman new_scarpbook.dart
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
+      );
     } else if (index == 2) {
       // TODO: LOGIC BACKEND UNTUK NAVIGASI KE HALAMAN PROFILE
       Navigator.pushNamed(context, '/profile');
