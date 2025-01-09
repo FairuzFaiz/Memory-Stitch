@@ -73,6 +73,14 @@ flutter:
     - assets/book_icon.png
     - assets/scrapbook_bg.jpg
     - assets/sample_photo.jpg
+    - assets/input1.png
+    - assets/input2.png
+    - assets/input3.png
+    - assets/input4.png
+    - assets/template1.png
+    - assets/template2.png
+    - assets/template3.png
+    - assets/template4.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
