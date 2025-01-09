@@ -47,6 +47,9 @@
 //   }
 // }
 
+
+
+//ini void main yang bisa dipake
 import 'package:flutter/material.dart';
 import 'package:memory_stitch/pages/profile_page.dart';
 
