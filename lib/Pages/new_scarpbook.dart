@@ -66,7 +66,7 @@ class NewScrapbookPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/template1.png${index + 1}.png', // Ganti dengan nama file template yang sesuai
+                        'assets/template${index + 1}.png', // Ganti dengan nama file template yang sesuai
                         height: 100,
                         fit: BoxFit.cover,
                       ),
