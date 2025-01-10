@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     fetchAllActivities();
+    searchKeyword.clear(); // Pastikan kosong saat halaman dimuat
+    filterActivities('');
   }
 
   Future<void> fetchAllActivities() async {
@@ -33,6 +35,7 @@ class _HomePageState extends State<HomePage> {
       print('Response JSON: $response'); // Debugging response
       final List data = jsonDecode(response);
       memoriesList = data.map((e) => MemoryModel.fromJson(e)).toList();
+      filteredList = data.map((e) => MemoryModel.fromJson(e)).toList();
       setState(() {
         isLoading = false;
       });
@@ -67,7 +70,7 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
       );
     } else if (index == 2) {
-      Navigator.pushNamed(context, '/profile');
+      Navigator.pushNamed(context, '/profile_page');
     }
   }
 
@@ -94,16 +97,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'MemoryStitch',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: !isSearching
+            ? const Text(
+                'MemoryStitch',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            : TextField(
+                controller: searchKeyword,
+                autofocus: true,
+                onChanged: filterActivities, // Panggil fungsi filter
+                decoration: const InputDecoration(
+                  hintText: 'Cari berdasarkan judul...',
+                  border: InputBorder.none,
+                ),
+              ),
         backgroundColor: Colors.brown,
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(isSearching ? Icons.close : Icons.search),
             onPressed: () {
-              // TODO: LOGIC BACKEND UNTUK FITUR PENCARIAN
+              setState(() {
+                if (isSearching) {
+                  searchKeyword.clear(); // Hapus teks pencarian
+                  filterActivities(''); // Reset hasil pencarian
+                }
+                isSearching = !isSearching; // Toggle mode pencarian
+              });
             },
           ),
           IconButton(
@@ -138,24 +157,60 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
-                  itemCount: memoriesList.length,
+                  itemCount: filteredList.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: () => _navigateToDetailPage(memoriesList[index]),
+                      onTap: () => _navigateToDetailPage(filteredList[index]),
                       child: MemoryCard(
-                        memory: memoriesList[index],
+                        memory: filteredList[index],
                         onEdit: () {
                           // Tambahkan logika edit
                         },
                         onDelete: () async {
-                          // try {
-                          //   await dataService.removeId(token, project, 'activities', appid, args[0]);
-                          //   setState(() {
-                          //     _memories.removeAt(index);
-                          //   });
-                          // } catch (e) {
-                          //   print('Failed to delete memory: $e');
-                          // }
+                          try {
+                            setState(() {
+                              isLoading = true; // Tampilkan loading indicator
+                            });
+
+                            bool success = await ds.removeId(
+                              token,
+                              project,
+                              'memory', // Nama koleksi
+                              appid,
+                              filteredList[index]
+                                  .id, // ID item yang ingin dihapus
+                            );
+
+                            if (success) {
+                              setState(() {
+                                memoriesList
+                                    .removeAt(index); // Hapus dari daftar utama
+                                filteredList.removeAt(
+                                    index); // Hapus dari daftar yang difilter
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('Berhasil menghapus memory')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('Gagal menghapus memory')),
+                              );
+                            }
+                          } catch (e) {
+                            print('Error deleting memory: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Terjadi kesalahan saat menghapus memory')),
+                            );
+                          } finally {
+                            setState(() {
+                              isLoading =
+                                  false; // Sembunyikan loading indicator
+                            });
+                          }
                         },
                         onDownload: () {
                           // Tambahkan logika unduh

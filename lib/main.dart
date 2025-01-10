@@ -54,6 +54,7 @@ import 'package:flutter/material.dart';
 import 'package:memory_stitch/Pages/home_screen.dart';
 import 'package:memory_stitch/Pages/login_page.dart';
 import 'package:memory_stitch/Pages/login_email_page.dart';
+import 'package:memory_stitch/Pages/profile_page.dart';
 import 'package:memory_stitch/Pages/register_page.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -101,6 +102,7 @@ class MemoryStitchApp extends StatelessWidget {
         '/login_email': (context) => LoginPageEmail(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
+        '/profile_page': (context) => ProfilePage(),
       },
     );
   }

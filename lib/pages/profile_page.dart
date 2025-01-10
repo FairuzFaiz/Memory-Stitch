@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,23 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  void _logout() async {
+    try {
+      await _auth.signOut();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logout Successfully')),
+      );
+      Navigator.pop(context); // Kembali ke halaman login atau sebelumnya
+    } catch (e) {
+      print('Error during logout: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to logout')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,15 +41,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Centered Picture
                   CircleAvatar(
                     radius: 60,
-                    backgroundImage: AssetImage('assets/images/Profile.jpg'),
+                    backgroundImage: AssetImage('assets/'),
                   ),
                   const SizedBox(
-                      height: 16), // Space between the image and the button
-
-                  // Two rows of text under the picture
+                      height: 16),
                   Text(
                     'nanda_',
                     style: TextStyle(
@@ -53,16 +68,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
 
                   ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Logout Successfully')),
-                      );
-                    },
+                    onPressed: _logout, // Gunakan fungsi logout
                     child: Text('Logout'),
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(200, 50), // Customize button size
+                      minimumSize: Size(200, 50),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
