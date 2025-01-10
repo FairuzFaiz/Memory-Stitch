@@ -149,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
                 currentIndex: _selectedIndex, // Highlight Profile icon
                 selectedItemColor: Colors.brown,
-                onTap: _onItemTapped, // Handle bottom navigation taps
+                onTap: _onItemTapped, // Handle bottom navigation taps.
               ),
             ),
           ),
