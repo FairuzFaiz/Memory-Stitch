@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'model.dart';
-import 'new_scarpbook.dart'; // Import halaman baru
-import 'detail_page.dart'; // Import detail page
+import 'package:memory_stitch/Model/memory_model.dart';
+import 'package:memory_stitch/restapi.dart';
+import 'new_scarpbook.dart';
+import 'detail_page.dart';
+import 'package:memory_stitch/config.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,38 +12,49 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final searchKeyword = TextEditingController();
+  bool isSearching = false;
+  bool isLoading = true;
+
   int _selectedIndex = 0;
-  List<Memory> _memories = [
-    Memory(
-      id: '1',
-      title: 'Kenangan 1',
-      description: 'Ini adalah deskripsi singkat kenangan 1.',
-      location: 'Jakarta',
-      date: DateTime(2025, 1, 1),
-      mood: 'Bahagia',
-      images: [
-        'assets/images/photo1.jpg',
-        'assets/images/photo2.jpg',
-        'assets/images/photo3.jpg'
-      ],
-      template: 'Template 1',
-    ),
-    Memory(
-      id: '2',
-      title: 'Kenangan 2',
-      description: 'Ini adalah deskripsi singkat kenangan 2.',
-      location: 'Bandung',
-      date: DateTime(2025, 1, 2),
-      mood: 'Sedih',
-      images: [
-        'assets/images/photo4.jpg',
-        'assets/images/photo5.jpg',
-        'assets/images/photo6.jpg'
-      ],
-      template: 'Template 2',
-    ),
-    // Tambahkan lebih banyak data jika diperlukan
-  ];
+  List<MemoryModel> memoriesList = [];
+  final DataService ds = DataService();
+  List<MemoryModel> filteredList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAllActivities();
+  }
+
+  Future<void> fetchAllActivities() async {
+    try {
+      final response = await ds.selectAll(token, project, 'memory', appid);
+      print('Response JSON: $response'); // Debugging response
+      final List data = jsonDecode(response);
+      memoriesList = data.map((e) => MemoryModel.fromJson(e)).toList();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void filterActivities(String keyword) {
+    setState(() {
+      if (keyword.isEmpty) {
+        filteredList = List.from(memoriesList);
+      } else {
+        filteredList = memoriesList
+            .where((item) =>
+                item.judul.toLowerCase().contains(keyword.toLowerCase()))
+            .toList();
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -48,34 +62,32 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (index == 1) {
-      // Navigasi ke halaman new_scarpbook.dart
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
       );
     } else if (index == 2) {
-      // TODO: LOGIC BACKEND UNTUK NAVIGASI KE HALAMAN PROFILE
       Navigator.pushNamed(context, '/profile');
     }
   }
 
-  void _navigateToDetailPage(Memory memory) {
+  void _navigateToDetailPage(MemoryModel memory) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => DetailPage(
-          title: memory.title,
-          date: memory.date.toLocal().toString().split(' ')[0], // Format date
-          texts: [
-            memory.description,
-            "Teks tambahan 1", // Placeholder for additional text
-            "Teks tambahan 2", // Placeholder for additional text
-          ],
-          imagePaths: memory.images,
-          template: memory.template, // Pass the template parameter
+          title: memory.judul,
+          date: memory.tanggal,
+          texts: [memory.desc1, memory.desc2, memory.desc3],
+          imagePaths: [memory.pict1, memory.pict2, memory.pict3],
+          templateName: memory.template,
         ),
       ),
     );
+  }
+
+  Future<void> reloadData(dynamic value) async {
+    await fetchAllActivities();
   }
 
   @override
@@ -86,7 +98,7 @@ class _HomePageState extends State<HomePage> {
           'MemoryStitch',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -126,20 +138,27 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
-                  itemCount: _memories.length,
+                  itemCount: memoriesList.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: () => _navigateToDetailPage(_memories[index]),
+                      onTap: () => _navigateToDetailPage(memoriesList[index]),
                       child: MemoryCard(
-                        memory: _memories[index],
+                        memory: memoriesList[index],
                         onEdit: () {
-                          // TODO: LOGIC BACKEND UNTUK EDIT SCRAPBOOK
+                          // Tambahkan logika edit
                         },
-                        onDelete: () {
-                          // TODO: LOGIC BACKEND UNTUK HAPUS SCRAPBOOK
+                        onDelete: () async {
+                          // try {
+                          //   await dataService.removeId(token, project, 'activities', appid, args[0]);
+                          //   setState(() {
+                          //     _memories.removeAt(index);
+                          //   });
+                          // } catch (e) {
+                          //   print('Failed to delete memory: $e');
+                          // }
                         },
                         onDownload: () {
-                          // TODO: LOGIC BACKEND UNTUK UNDUH SCRAPBOOK
+                          // Tambahkan logika unduh
                         },
                       ),
                     );
@@ -161,11 +180,11 @@ class _HomePageState extends State<HomePage> {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: Colors.brown,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.orange.withOpacity(0.4),
+                    color: Colors.brown.withOpacity(0.4),
                     blurRadius: 8,
                     spreadRadius: 2,
                     offset: Offset(0, 4),
@@ -182,7 +201,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
+        selectedItemColor: Colors.brown,
         onTap: _onItemTapped,
       ),
     );
@@ -190,7 +209,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class MemoryCard extends StatelessWidget {
-  final Memory memory;
+  final MemoryModel memory;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onDownload;
@@ -218,7 +237,7 @@ class MemoryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  memory.title,
+                  memory.judul,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -254,7 +273,7 @@ class MemoryCard extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              memory.date.toLocal().toString().split(' ')[0],
+              memory.tanggal,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
@@ -262,7 +281,7 @@ class MemoryCard extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              memory.description,
+              '${memory.desc1}',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
