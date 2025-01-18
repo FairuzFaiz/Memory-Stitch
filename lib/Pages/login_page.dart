@@ -65,40 +65,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
                       children: [
-                        // Column(
-                        //   children: [
-                        //     Padding(
-                        //       padding: const EdgeInsets.only(
-                        //           right: 2.0), // Jarak kanan
-                        //       child: Text(
-                        //         'Welcome To',
-                        //         style: TextStyle(
-                        //           fontSize: 20,
-                        //           fontWeight: FontWeight.bold,
-                        //           color: Colors.black,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     SizedBox(height: 50),
-                        //   ],
-                        // ),
-                        Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: Text(
-                                'MemoryStitch',
-                                style: TextStyle(
-                                  fontSize: 34,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.brown,
-                                ),
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 0.0),
+                          child: Text(
+                            'MemoryStitch',
+                            style: TextStyle(
+                              fontSize: 34,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown,
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
@@ -112,48 +90,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Logic untuk login dengan Facebook
-                      },
-                      icon: const Icon(
-                        Icons.facebook,
-                        color: Colors.white,
-                      ),
-                      label: const Text(
-                        'Continue with Facebook',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3b5998),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Logic untuk login dengan Google
-                      },
-                      icon: const Icon(
-                        Icons.email_outlined,
-                        color: Colors.white,
-                      ),
-                      label: const Text(
-                        'Continue with Google',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFdb4437),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -163,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                       child: const Text(
-                        'Or Use Email',
+                        'Login with Email',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

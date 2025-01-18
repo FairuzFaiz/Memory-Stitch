@@ -47,8 +47,6 @@
 //   }
 // }
 
-
-
 //ini void main yang bisa dipake
 import 'package:flutter/material.dart';
 import 'package:memory_stitch/Pages/home_screen.dart';
@@ -96,7 +94,7 @@ class MemoryStitchApp extends StatelessWidget {
           bodyMedium: TextStyle(color: Colors.black),
         ),
       ),
-      initialRoute: '/',
+      initialRoute: 'LoginPage',
       routes: {
         '/': (context) => const LoginPage(),
         '/login_email': (context) => LoginPageEmail(),

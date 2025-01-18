@@ -5,6 +5,7 @@ import 'package:memory_stitch/restapi.dart';
 import 'new_scarpbook.dart';
 import 'detail_page.dart';
 import 'package:memory_stitch/config.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,6 +22,9 @@ class _HomePageState extends State<HomePage> {
   final DataService ds = DataService();
   List<MemoryModel> filteredList = [];
 
+  String _searchQuery = '';
+  String _selectedCategory = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       print('Response JSON: $response'); // Debugging response
       final List data = jsonDecode(response);
       memoriesList = data.map((e) => MemoryModel.fromJson(e)).toList();
-      filteredList = data.map((e) => MemoryModel.fromJson(e)).toList();
+      filteredList = memoriesList; // Initialize filteredList
       setState(() {
         isLoading = false;
       });
@@ -96,42 +100,20 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: !isSearching
-            ? const Text(
-                'MemoryStitch',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-            : TextField(
-                controller: searchKeyword,
-                autofocus: true,
-                onChanged: filterActivities, // Panggil fungsi filter
-                decoration: const InputDecoration(
-                  hintText: 'Cari berdasarkan judul...',
-                  border: InputBorder.none,
-                ),
-              ),
-        backgroundColor: Colors.brown,
-        actions: [
-          IconButton(
-            icon: Icon(isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                if (isSearching) {
-                  searchKeyword.clear(); // Hapus teks pencarian
-                  filterActivities(''); // Reset hasil pencarian
-                }
-                isSearching = !isSearching; // Toggle mode pencarian
-              });
-            },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+          child: AppBar(
+            backgroundColor: Colors.brown,
+            title: Text(
+              'MemoryStitch',
+              style: GoogleFonts.poppins(color: Colors.white),
+            ),
+            centerTitle: true,
+            automaticallyImplyLeading: false, // Remove back button
           ),
-          IconButton(
-            icon: Icon(Icons.sort),
-            onPressed: () {
-              // TODO: LOGIC BACKEND UNTUK FITUR PENGURUTAN
-            },
-          ),
-        ],
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -146,15 +128,70 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              const Text(
-                'Daftar Scrapbook Anda',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.brown.withOpacity(0.5), // Adjusted opacity
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  'Daftar Scrapbook Anda',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
+              // Search and Category Filter
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[200],
+                      ),
+                      child: TextField(
+                        controller: searchKeyword,
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                            filterActivities(_searchQuery);
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Search by title',
+                          border: InputBorder.none,
+                          prefixIcon: Icon(Icons.search, color: Colors.brown),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.sort, color: Colors.brown),
+                    onSelected: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return <String>['All', 'Category1', 'Category2']
+                          .map<PopupMenuItem<String>>((String value) {
+                        return PopupMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
                   itemCount: filteredList.length,

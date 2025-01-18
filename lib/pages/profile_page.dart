@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart'; // Import HomePage
 import 'new_scarpbook.dart'; // Import NewScrapbookPage
+import 'login_email_page.dart'; // Import LoginPageEmail
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -11,42 +13,27 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // void _logout() async {
-  //   try {
-  //     await _auth.signOut();
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Logout Successfully')),
-  //     );
-  //     Navigator.pop(context); // Kembali ke halaman login atau sebelumnya
-  //   } catch (e) {
-  //     print('Error during logout: $e');
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to logout')),
-  //     );
-  //   }
-  // }
-
   void _logout() async {
-  try {
-    await _auth.signOut();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Logout Successfully')),
-    );
-    Navigator.pushReplacementNamed(context, '/login_email');
-  } catch (e) {
-    print('Error during logout: ${e.toString()}');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to logout: ${e.toString()}')),
-    );
+    try {
+      await _auth.signOut();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logout Successfully')),
+      );
+      // Clear the navigation stack and navigate to LoginPageEmail
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPageEmail()),
+        (Route<dynamic> route) => false, // Remove all previous routes
+      );
+    } catch (e) {
+      print('Error during logout: ${e.toString()}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to logout: ${e.toString()}')),
+      );
+    }
   }
-}
-
-
 
   int _selectedIndex = 2; // Set initial index to Profile
-
-
-  //int _selectedIndex = 2; // Set initial index to Profile
 
   void _onItemTapped(int index) {
     setState(() {
@@ -74,10 +61,20 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Profile Page'),
-        automaticallyImplyLeading: false, // Remove back button
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+          child: AppBar(
+            backgroundColor: Colors.brown,
+            title: Text(
+              'Profile Page',
+              style: GoogleFonts.poppins(color: Colors.white),
+            ),
+            centerTitle: true,
+            automaticallyImplyLeading: false, // Remove back button
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -160,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       child: Icon(Icons.add, color: Colors.white),
                     ),
-                    label: 'Add Journal',
+                    label: 'Tambah',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.person),
