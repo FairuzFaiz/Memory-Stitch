@@ -45,24 +45,29 @@ class _ProfilePageState extends State<ProfilePage> {
 
   int _selectedIndex = 2; // Set initial index to Profile
 
+
+  //int _selectedIndex = 2; // Set initial index to Profile
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/'); // HomePage
-        break;
-      case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
-        );
-        break;
-      case 2:
-        // Stay on ProfilePage
-        break;
+    if (index == 0) {
+      // Navigate to HomePage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else if (index == 1) {
+      // Navigate to NewScrapbookPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
+      );
+    } else if (index == 2) {
+      // Stay on ProfilePage
+      // No action needed
     }
   }
 
@@ -86,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   CircleAvatar(
                     radius: 60,
                     backgroundImage: AssetImage(
-                        'assets/book_icon.png'), // Update with your image path
+                        'assets/profile_image.png'), // Update with your image path
                   ),
                   const SizedBox(height: 16),
                   Text(
