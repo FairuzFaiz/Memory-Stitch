@@ -25,7 +25,7 @@ class MemoryModel {
 
   factory MemoryModel.fromJson(Map<String, dynamic> json) {
     return MemoryModel(
-      id: json['_id'] ?? '', // Menggunakan '' jika null
+      id: json['_id'] ?? '',
       judul: json['judul'] ?? '',
       desc1: json['desc1'] ?? '',
       desc2: json['desc2'] ?? '',

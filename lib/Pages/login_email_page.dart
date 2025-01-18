@@ -66,26 +66,26 @@ class LoginPageEmail extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Column(
+                  //   children: [
+                  //     Padding(
+                  //       padding: const EdgeInsets.only(right: 2.0),
+                  //       child: Text(
+                  //         'Welcome To',
+                  //         style: TextStyle(
+                  //           fontSize: 20,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.black,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(height: 50),
+                  //   ],
+                  // ),
                   Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 2.0),
-                        child: Text(
-                          'Welcome To',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 50),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
+                        padding: const EdgeInsets.only(left: 0.0),
                         child: Text(
                           'MemoryStitch',
                           style: TextStyle(
@@ -136,7 +136,7 @@ class LoginPageEmail extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => _loginWithEmailPassword(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.brown,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),

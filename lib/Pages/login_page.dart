@@ -68,27 +68,27 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Column(
+                        //   children: [
+                        //     Padding(
+                        //       padding: const EdgeInsets.only(
+                        //           right: 2.0), // Jarak kanan
+                        //       child: Text(
+                        //         'Welcome To',
+                        //         style: TextStyle(
+                        //           fontSize: 20,
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Colors.black,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(height: 50),
+                        //   ],
+                        // ),
                         Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 2.0), // Jarak kanan
-                              child: Text(
-                                'Welcome To',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 50),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 0.0),
                               child: Text(
                                 'MemoryStitch',
                                 style: TextStyle(

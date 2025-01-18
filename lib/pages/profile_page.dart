@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'home_screen.dart'; // Import HomePage
+import 'new_scarpbook.dart'; // Import NewScrapbookPage
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -10,18 +11,58 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // void _logout() async {
+  //   try {
+  //     await _auth.signOut();
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Logout Successfully')),
+  //     );
+  //     Navigator.pop(context); // Kembali ke halaman login atau sebelumnya
+  //   } catch (e) {
+  //     print('Error during logout: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to logout')),
+  //     );
+  //   }
+  // }
+
   void _logout() async {
-    try {
-      await _auth.signOut();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Logout Successfully')),
-      );
-      Navigator.pop(context); // Kembali ke halaman login atau sebelumnya
-    } catch (e) {
-      print('Error during logout: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to logout')),
-      );
+  try {
+    await _auth.signOut();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Logout Successfully')),
+    );
+    Navigator.pushReplacementNamed(context, '/login_email');
+  } catch (e) {
+    print('Error during logout: ${e.toString()}');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to logout: ${e.toString()}')),
+    );
+  }
+}
+
+
+
+  int _selectedIndex = 2; // Set initial index to Profile
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/'); // HomePage
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
+        );
+        break;
+      case 2:
+        // Stay on ProfilePage
+        break;
     }
   }
 
@@ -31,6 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Profile Page'),
+        automaticallyImplyLeading: false, // Remove back button
       ),
       body: Stack(
         children: [
@@ -43,10 +85,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   CircleAvatar(
                     radius: 60,
-                    backgroundImage: AssetImage('assets/'),
+                    backgroundImage: AssetImage(
+                        'assets/book_icon.png'), // Update with your image path
                   ),
-                  const SizedBox(
-                      height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     'nanda_',
                     style: TextStyle(
@@ -64,11 +106,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-
                   const SizedBox(height: 24),
-
                   ElevatedButton(
-                    onPressed: _logout, // Gunakan fungsi logout
+                    onPressed: _logout, // Use logout function
                     child: Text('Logout'),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(200, 50),
@@ -92,13 +132,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               child: BottomNavigationBar(
-                items: const [
+                items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
                     icon: Icon(Icons.home),
                     label: 'Home',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.add),
+                    icon: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.brown,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.brown.withOpacity(0.4),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(Icons.add, color: Colors.white),
+                    ),
                     label: 'Add Journal',
                   ),
                   BottomNavigationBarItem(
@@ -106,10 +162,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     label: 'Profile',
                   ),
                 ],
-                currentIndex: 2, // Highlight Profile icon
-                onTap: (index) {
-                  // Handle bottom navigation taps
-                },
+                currentIndex: _selectedIndex, // Highlight Profile icon
+                selectedItemColor: Colors.brown,
+                onTap: _onItemTapped, // Handle bottom navigation taps.
               ),
             ),
           ),
