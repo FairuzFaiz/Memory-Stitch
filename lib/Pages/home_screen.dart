@@ -6,6 +6,7 @@ import 'new_scarpbook.dart';
 import 'detail_page.dart';
 import 'package:memory_stitch/config.dart';
 import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
+import 'edit_scarpbook.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -338,7 +339,25 @@ class MemoryCard extends StatelessWidget {
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     if (value == 'Edit') {
-                      onEdit();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditScrapbookPage(
+                            key: key,
+                            templateIndex: int.parse(memory.template),
+                            initialTitle: memory.judul,
+                            initialDesc1: memory.desc1,
+                            initialDesc2: memory.desc2,
+                            initialDesc3: memory.desc3,
+                            initialDate: memory.tanggal,
+                            initialImagePaths: [
+                              memory.pict1,
+                              memory.pict2,
+                              memory.pict3
+                            ],
+                          ),
+                        ),
+                      );
                     } else if (value == 'Hapus') {
                       onDelete();
                     } else if (value == 'Unduh') {
