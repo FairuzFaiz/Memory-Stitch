@@ -2,8 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart'; // Import HomePage
 import 'new_scarpbook.dart'; // Import NewScrapbookPage
-import 'login_email_page.dart'; // Import LoginPageEmail
+import 'login_page.dart'; // Import LoginPageEmail
 import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:memory_stitch/Model/user_model.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -22,8 +25,10 @@ class _ProfilePageState extends State<ProfilePage> {
       // Clear the navigation stack and navigate to LoginPageEmail
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPageEmail()),
-        (Route<dynamic> route) => false, // Remove all previous routes
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+        (Route<dynamic> route) => false, // This will remove all previous routes
       );
     } catch (e) {
       print('Error during logout: ${e.toString()}');
@@ -58,6 +63,18 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  File? _profileImage;
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +102,32 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage(
-                        'assets/book_icon.png'), // Update with your image path
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!)
+                            : AssetImage('assets/logo.png')
+                                as ImageProvider, // Placeholder image
+                        child: _profileImage == null
+                            ? Icon(Icons.person,
+                                size: 60,
+                                color:
+                                    Colors.grey) // Default icon when no image
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: Icon(Icons.camera_alt, color: Colors.white),
+                          onPressed: _pickImage,
+                          color: Colors.black54,
+                          iconSize: 30,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -148,8 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginPageEmail()),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     },
                     child: Text('Logout'),
