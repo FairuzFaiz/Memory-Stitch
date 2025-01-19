@@ -7,6 +7,8 @@ import 'package:memory_stitch/config.dart';
 import 'package:flutter/material.dart';
 import 'package:memory_stitch/Model/memory_model.dart';
 
+
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -338,7 +340,25 @@ class MemoryCard extends StatelessWidget {
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     if (value == 'Edit') {
-                      onEdit();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditScrapbookPage(
+                            key: key,
+                            templateIndex: int.parse(memory.template),
+                            initialTitle: memory.judul,
+                            initialDesc1: memory.desc1,
+                            initialDesc2: memory.desc2,
+                            initialDesc3: memory.desc3,
+                            initialDate: memory.tanggal,
+                            initialImagePaths: [
+                              memory.pict1,
+                              memory.pict2,
+                              memory.pict3
+                            ],
+                          ),
+                        ),
+                      );
                     } else if (value == 'Hapus') {
                       onDelete();
                     } else if (value == 'Unduh') {
