@@ -101,6 +101,7 @@ class MemoryStitchApp extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
         '/profile_page': (context) => ProfilePage(),
+        '/logout': (context) => LoginPage(),
       },
     );
   }

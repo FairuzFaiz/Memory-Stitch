@@ -88,34 +88,75 @@ class _ProfilePageState extends State<ProfilePage> {
                   CircleAvatar(
                     radius: 60,
                     backgroundImage: AssetImage(
-                        'assets/profile_image.png'), // Update with your image path
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'nanda_',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
+                        'assets/book_icon.png'), // Update with your image path
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'This is my own personal journal',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
+                  SizedBox(
+                    width: 300.0,
+                    height: 90.0,
+                    child: Card(
+                      margin: EdgeInsets.all(16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      elevation: 4.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Username',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    width: 300.0,
+                    height: 90.0,
+                    child: Card(
+                      margin: EdgeInsets.all(16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      elevation: 4.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'This is my own personal journal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: _logout, // Use logout function
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginPageEmail()),
+                      );
+                    },
                     child: Text('Logout'),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(200, 50),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
