@@ -1,7 +1,7 @@
 class MemoryModel {
   final String id;
-  final String judul;
-  final String desc1;
+  late final String judul;
+  late final String desc1;
   final String desc2;
   final String desc3;
   final String pict1;

@@ -6,7 +6,8 @@ class RegisterPage extends StatelessWidget {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   Future<void> _register(BuildContext context) async {
     final String email = _emailController.text.trim();
@@ -36,7 +37,8 @@ class RegisterPage extends StatelessWidget {
     }
     if (password.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password must be at least 8 characters!')),
+        const SnackBar(
+            content: Text('Password must be at least 8 characters!')),
       );
       return;
     }
@@ -96,6 +98,7 @@ class RegisterPage extends StatelessWidget {
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Padding(
@@ -170,7 +173,7 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/');
+                  Navigator.pushNamed(context, '/login_email');
                 },
                 child: const Text(
                   'Already have an account? LOGIN',

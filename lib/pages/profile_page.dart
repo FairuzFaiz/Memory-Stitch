@@ -2,8 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart'; // Import HomePage
 import 'new_scarpbook.dart'; // Import NewScrapbookPage
-import 'login_email_page.dart'; // Import LoginPageEmail
+import 'login_page.dart'; // Import LoginPageEmail
 import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:memory_stitch/Model/user_model.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -22,8 +25,10 @@ class _ProfilePageState extends State<ProfilePage> {
       // Clear the navigation stack and navigate to LoginPageEmail
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPageEmail()),
-        (Route<dynamic> route) => false, // Remove all previous routes
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+        (Route<dynamic> route) => false, // This will remove all previous routes
       );
     } catch (e) {
       print('Error during logout: ${e.toString()}');
@@ -58,6 +63,18 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  File? _profileImage;
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,37 +102,99 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage(
-                        'assets/profile_image.png'), // Update with your image path
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'nanda_',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!)
+                            : AssetImage('assets/logo.png')
+                                as ImageProvider, // Placeholder image
+                        child: _profileImage == null
+                            ? Icon(Icons.person,
+                                size: 60,
+                                color:
+                                    Colors.grey) // Default icon when no image
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: Icon(Icons.camera_alt, color: Colors.white),
+                          onPressed: _pickImage,
+                          color: Colors.black54,
+                          iconSize: 30,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'This is my own personal journal',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
+                  SizedBox(
+                    width: 300.0,
+                    height: 90.0,
+                    child: Card(
+                      margin: EdgeInsets.all(16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      elevation: 4.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Username',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    width: 300.0,
+                    height: 90.0,
+                    child: Card(
+                      margin: EdgeInsets.all(16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      elevation: 4.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'This is my own personal journal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: _logout, // Use logout function
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
                     child: Text('Logout'),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(200, 50),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
