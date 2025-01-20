@@ -56,6 +56,7 @@ import 'package:memory_stitch/Pages/profile_page.dart';
 import 'package:memory_stitch/Pages/register_page.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:memory_stitch/Pages/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
 //import 'package:provider/provider.dart';
@@ -94,10 +95,10 @@ class MemoryStitchApp extends StatelessWidget {
           bodyMedium: TextStyle(color: Colors.black),
         ),
       ),
-      initialRoute: 'LoginPage',
+      initialRoute: 'SplashScreen',
       routes: {
-        '/': (context) => const LoginPage(),
-        '/login_email': (context) => LoginPageEmail(),
+        '/': (context) => SplashScreen(),
+        '/login': (context) => LoginPageEmail(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
         '/profile_page': (context) => ProfilePage(),

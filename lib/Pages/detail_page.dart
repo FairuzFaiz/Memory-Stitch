@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memory_stitch/config.dart';
+import 'package:memory_stitch/config.dart'; // Assuming this contains `fileUri`
 
 class DetailPage extends StatelessWidget {
   final String title; // Scrapbook title

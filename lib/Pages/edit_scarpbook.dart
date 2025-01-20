@@ -88,10 +88,6 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.memory.judul);
-    _descriptionController = TextEditingController(text: widget.memory.desc1);
-  }
-
     // Inisialisasi controller dengan data yang ada
     judul.text = widget.initialTitle;
     desc1.text = widget.initialDesc1;

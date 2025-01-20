@@ -15,7 +15,7 @@ class NewScrapbookPage extends StatelessWidget {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-                'assets/scrapbook_bg.jpg'), // Ganti dengan nama file gambar latar belakang
+                'assets/scrapbook_bg.jpg'), 
             fit: BoxFit.cover,
           ),
         ),

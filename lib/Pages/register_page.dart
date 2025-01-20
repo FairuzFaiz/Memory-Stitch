@@ -68,7 +68,7 @@ class RegisterPage extends StatelessWidget {
       );
 
       // Navigasi ke halaman login
-      Navigator.pushReplacementNamed(context, '/');
+      Navigator.pushReplacementNamed(context, '/login');
     } on FirebaseAuthException catch (e) {
       String message = 'Registration failed. Please try again.';
       if (e.code == 'email-already-in-use') {
@@ -159,7 +159,7 @@ class RegisterPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => _register(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.brown,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -173,7 +173,7 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/login_email');
+                  Navigator.pushNamed(context, '/login');
                 },
                 child: const Text(
                   'Already have an account? LOGIN',

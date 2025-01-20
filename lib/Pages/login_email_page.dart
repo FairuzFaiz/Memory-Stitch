@@ -1,11 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPageEmail extends StatelessWidget {
-  LoginPageEmail({super.key});
+class LoginPageEmail extends StatefulWidget {
+  const LoginPageEmail({super.key});
 
+  @override
+  _LoginPageEmailState createState() => _LoginPageEmailState();
+}
+
+class _LoginPageEmailState extends State<LoginPageEmail> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _passwordVisible = false;
 
   Future<void> _loginWithEmailPassword(BuildContext context) async {
     final String email = _emailController.text.trim();
@@ -38,6 +46,12 @@ class LoginPageEmail extends StatelessWidget {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
     }
+  }
+
+  void togglePasswordVisibility() {
+    setState(() {
+      _passwordVisible = !_passwordVisible;
+    });
   }
 
   @override
@@ -103,14 +117,22 @@ class LoginPageEmail extends StatelessWidget {
               const SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
+                obscureText: !_passwordVisible,
                 decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                  labelText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.remove_red_eye_outlined,
                     ),
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: const Icon(Icons.remove_red_eye_outlined)),
-                obscureText: true,
+                    onPressed: togglePasswordVisibility,
+                  ),
+                ),
               ),
               const SizedBox(height: 30),
               ElevatedButton(
