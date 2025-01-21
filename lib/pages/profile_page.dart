@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:memory_stitch/Pages/login_email_page.dart';
 import 'home_screen.dart'; // Import HomePage
 import 'new_scarpbook.dart'; // Import NewScrapbookPage
-import 'login_page.dart'; // Import LoginPageEmail
+
 import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -26,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginPage(),
+          builder: (context) => LoginPageEmail(),
         ),
         (Route<dynamic> route) => false, // This will remove all previous routes
       );
@@ -187,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => LoginPageEmail()),
                       );
                     },
                     child: Text('Logout'),

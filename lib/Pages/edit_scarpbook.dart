@@ -10,94 +10,48 @@ import 'package:memory_stitch/config.dart';
 import 'package:memory_stitch/restapi.dart';
 
 class EditScrapbookPage extends StatefulWidget {
+  final MemoryModel memory;
   final int templateIndex;
-  final String initialTitle;
-  final String initialDesc1;
-  final String initialDesc2;
-  final String initialDesc3;
-  final String initialDate;
-  final List<String> initialImagePaths;
 
   const EditScrapbookPage({
-    super.key,
+    Key? key,
+    required this.memory,
     required this.templateIndex,
-    required this.initialTitle,
-    required this.initialDesc1,
-    required this.initialDesc2,
-    required this.initialDesc3,
-    required this.initialDate,
-    required this.initialImagePaths,
-  });
+  }) : super(key: key);
 
   @override
   _EditScrapbookPageState createState() => _EditScrapbookPageState();
 }
 
 class _EditScrapbookPageState extends State<EditScrapbookPage> {
-  final judul = TextEditingController();
-  final desc1 = TextEditingController();
-  final desc2 = TextEditingController();
-  final desc3 = TextEditingController();
-  String pict1 = '';
-  String pict2 = '';
-  String pict3 = '';
-  final tanggal = TextEditingController();
-  String template = '';
-  String update_id = '';
-  bool loadData = false;
+  final judulController = TextEditingController();
+  final desc1Controller = TextEditingController();
+  final desc2Controller = TextEditingController();
+  final desc3Controller = TextEditingController();
+  final tanggalController = TextEditingController();
+  late List<String> imagePaths;
 
-  // final TextEditingController judulController = TextEditingController();
-  // final TextEditingController desc1Controller = TextEditingController();
-  // final TextEditingController desc2Controller = TextEditingController();
-  // final TextEditingController desc3Controller = TextEditingController();
-  // final TextEditingController tanggalController = TextEditingController();
-
-  DataService dataService = DataService();
-
-  // Simpan path gambar untuk 3 foto
-  late List<String> _imagePaths;
-
-  // URL dasar untuk gambar
+  final DataService dataService = DataService();
   final String fileUri = 'https://io.etter.cloud/v4/upload';
-
-  // Token dan project untuk upload
   final String token = '67072e7f1be56c51cde09d97';
   final String project = 'memory';
-
-  List<MemoryModel> memory = [];
-
-  selectIdMemory(String id) async {
-    List data = [];
-    data = jsonDecode(
-        await dataService.selectId(token, project, 'memory', appid, id));
-    memory = data.map((e) => MemoryModel.fromJson(e)).toList();
-
-    setState(() {
-      judul.text = memory[0].judul;
-      desc1.text = memory[0].desc1;
-      desc2.text = memory[0].desc2;
-      desc3.text = memory[0].desc3;
-      pict1 = memory[0].pict1;
-      pict2 = memory[0].pict2;
-      pict3 = memory[0].pict3;
-      tanggal.text = memory[0].tanggal;
-      template = memory[0].template;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi controller dengan data yang ada
-    judul.text = widget.initialTitle;
-    desc1.text = widget.initialDesc1;
-    desc2.text = widget.initialDesc2;
-    desc3.text = widget.initialDesc3;
-    tanggal.text = widget.initialDate;
-    _imagePaths = List.from(widget.initialImagePaths);
+
+    judulController.text = widget.memory.judul;
+    desc1Controller.text = widget.memory.desc1;
+    desc2Controller.text = widget.memory.desc2;
+    desc3Controller.text = widget.memory.desc3;
+    tanggalController.text = widget.memory.tanggal;
+    imagePaths = [
+      widget.memory.pict1,
+      widget.memory.pict2,
+      widget.memory.pict3,
+    ];
   }
 
-  // Function to pick and upload an image
   Future<void> _pickImage(int index) async {
     try {
       var picked = await FilePicker.platform.pickFiles(
@@ -119,7 +73,7 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
         if (response != null) {
           var file = jsonDecode(response);
           setState(() {
-            _imagePaths[index] = file['file_name']; // Simpan nama file
+            imagePaths[index] = file['file_name']; 
           });
         } else {
           _showSnackBar('Upload failed');
@@ -130,65 +84,108 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
     }
   }
 
-  // Function to show snackbar
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
 
-  // Function to save data
-  // Future<void> _saveData() async {
-  //   try {
-  //     // String templateName = 'input${widget.templateIndex + 1}.png';
+  Future<void> _saveData() async {
+    try {
+      String templateName = 'input${widget.templateIndex + 1}.png';
 
-  //     // Panggil metode untuk memperbarui data scrapbook
-  //     final String response = await dataService.updateId(
-  //         // 'judul~desc1~desc2~desc3~pict1~pict2~pict3~tanggal~template',
-  //         // appid, // ID scrapbook yang ingin diperbarui
-  //         // judul.text +
-  //         //     '~' +
-  //         //     desc1.text +
-  //         //     '~' +
-  //         //     desc2.text +
-  //         //     '~' +
-  //         //     desc3.text +
-  //         //     '~' +
-  //         //     _imagePaths[0], // pict1
-  //         // _imagePaths[1], // pict2
-  //         // _imagePaths[2], // pict3
-  //         // tanggal.text,
-  //         // templateName,
-  //         );
+      String updateValue = [
+        judulController.text,
+        desc1Controller.text,
+        desc2Controller.text,
+        desc3Controller.text,
+        imagePaths[0],
+        imagePaths[1],
+        imagePaths[2],
+        tanggalController.text,
+        templateName,
+      ].join('~');
 
-  //     if (response != '[]') {
-  //       Navigator.pushAndRemoveUntil(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => HomePage()),
-  //         (route) => false,
-  //       );
-  //     } else {
-  //       if (kDebugMode) {
-  //         print("Error response: $response");
-  //       }
-  //     }
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       print("Error saving data: $e");
-  //     }
-  //   }
-  // }
+      bool updateStatus = await dataService.updateId(
+        'judul~desc1~desc2~desc3~pict1~pict2~pict3~tanggal~template',
+        judulController.text +
+            '~' +
+            desc1Controller.text +
+            '~' +
+            desc2Controller.text +
+            '~' +
+            desc3Controller.text +
+            '~' +
+            imagePaths[0] +
+            '~' +
+            imagePaths[1] +
+            '~' +
+            imagePaths[2] +
+            '~' +
+            tanggalController.text +
+            '~' +
+            templateName,
+        token,
+        project,
+        'memory',
+        appid,
+        widget.memory.id,
+      );
+
+      if (updateStatus) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        _showSnackBar('Failed to update data');
+      }
+    } catch (e) {
+      _showSnackBar('Error saving data: $e');
+    }
+  }
+
+  Future<bool> updateId(String update_field, String update_value, String token,
+      String project, String collection, String appid, String id) async {
+    String uri = 'https://io.etter.cloud/v4/update_id';
+
+    try {
+      final response = await http.put(
+        Uri.parse(uri),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'update_field': update_field,
+          'update_value': update_value,
+          'token': token,
+          'project': project,
+          'collection': collection,
+          'appid': appid,
+          'id': id,
+        },
+      );
+
+      if (kDebugMode) {
+        print('API Status Code: ${response.statusCode}');
+        print('API Response Body: ${response.body}');
+      }
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error in updateId: $e');
+      }
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)?.settings.arguments;
-
-    // if (!loadData) {
-    //   update_id = args;
-    //   selectIdMemory(update_id);
-    //   loadData = true;
-    // }
-
     String backgroundImage = 'assets/input${widget.templateIndex + 1}.png';
 
     return Scaffold(
@@ -208,29 +205,20 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
           children: [
             const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Expanded(
+                  child: TextField(
+                    controller: judulController,
+                    decoration: const InputDecoration(
+                      labelText: 'Judul Scrapbook',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () => _selectDate(context),
                   child: const Text('Edit Date'),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  tanggal.text.isEmpty ? 'Pilih tanggal' : tanggal.text,
-                  style: const TextStyle(fontSize: 16, color: Colors.black87),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: judul,
-                    decoration: InputDecoration(
-                      labelText: 'Judul Scrapbook',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                    ),
-                    maxLength: 23,
-                  ),
                 ),
               ],
             ),
@@ -239,42 +227,17 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildImageAndTextField(desc1, 0),
-                  _buildImageAndTextField(desc2, 1, isImageLeft: false),
-                  _buildImageAndTextField(desc3, 2),
+                  _buildImageAndTextField(desc1Controller, 0),
+                  _buildImageAndTextField(desc2Controller, 1,
+                      isImageLeft: false),
+                  _buildImageAndTextField(desc3Controller, 2),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async {
-                String templateName = 'input${widget.templateIndex + 1}.png';
-                bool updateStatus = await dataService.updateId(
-                    'judul~desc1~desc2~desc3~pict1~pict2~pict3~tanggal~template',
-                    appid,
-                    judul.text +
-                        '~' +
-                        desc1.text +
-                        '~' +
-                        desc2.text +
-                        '~' +
-                        desc3.text +
-                        '~' +
-                        _imagePaths[0], // pict1
-                    _imagePaths[1], // pict2
-                    _imagePaths[2], // pict3
-                    tanggal.text,
-                    templateName);
-
-                if (updateStatus) {
-                  if (mounted) {
-                    Navigator.pop(context, true);
-                  }
-                }
-              },
-              child: const Text('Update'),
+              onPressed: _saveData,
+              child: const Text('Save Changes'),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -282,8 +245,10 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
   }
 
   Widget _buildImageAndTextField(
-      TextEditingController textController, int index,
-      {bool isImageLeft = true}) {
+    TextEditingController textController,
+    int index, {
+    bool isImageLeft = true,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: isImageLeft
@@ -303,30 +268,20 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
   Widget _buildImageInput(int index) {
     return Expanded(
       flex: 2,
-      child: Container(
-        height: 120,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Stack(
-          children: [
-            if (_imagePaths[index] != "-")
-              Positioned.fill(
-                child: Image.network(
-                  '$fileUri${_imagePaths[index]}',
+      child: GestureDetector(
+        onTap: () => _pickImage(index),
+        child: Container(
+          height: 120,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: imagePaths[index].isNotEmpty
+              ? Image.network(
+                  fileUri + imagePaths[index],
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                        child: Icon(Icons.broken_image, size: 50));
-                  },
-                ),
-              ),
-            IconButton(
-              icon: const Icon(Icons.add_a_photo),
-              onPressed: () => _pickImage(index),
-            ),
-          ],
+                )
+              : const Icon(Icons.add_a_photo, size: 50),
         ),
       ),
     );
@@ -335,24 +290,19 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
   Widget _buildTextField(TextEditingController textController) {
     return Expanded(
       flex: 3,
-      child: Container(
-        height: 120,
-        child: TextField(
-          controller: textController,
-          maxLines: 3,
-          maxLength: 60,
-          decoration: InputDecoration(
-            labelText: 'Teks',
-            border: OutlineInputBorder(),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.8),
-          ),
+      child: TextField(
+        controller: textController,
+        maxLines: 3,
+        decoration: const InputDecoration(
+          labelText: 'Description',
+          border: OutlineInputBorder(),
+          fillColor: Colors.white70,
+        filled: true,
         ),
       ),
     );
   }
 
-  // Function to show date picker
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
@@ -362,10 +312,8 @@ class _EditScrapbookPageState extends State<EditScrapbookPage> {
     );
 
     if (selectedDate != null) {
-      final String formattedDate =
-          DateFormat('dd-MMM-yyyy').format(selectedDate);
       setState(() {
-        tanggal.text = formattedDate;
+        tanggalController.text = DateFormat('dd-MMM-yyyy').format(selectedDate);
       });
     }
   }

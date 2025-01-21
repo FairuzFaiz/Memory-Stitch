@@ -497,27 +497,37 @@ class DataService {
     }
   }
 
-  Future updateId(String update_field, String update_value, String token,
+  Future<bool> updateId(String update_field, String update_value, String token,
       String project, String collection, String appid, String id) async {
     String uri = 'https://io.etter.cloud/v4/update_id';
 
     try {
-      final response = await http.put(Uri.parse(uri), body: {
-        'update_field': update_field,
-        'update_value': update_value,
-        'token': token,
-        'project': project,
-        'collection': collection,
-        'appid': appid,
-        'id': id
-      });
+      final response = await http.put(
+        Uri.parse(uri),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'update_field': update_field, // Fixed typo here
+          'update_value': update_value,
+          'token': token,
+          'project': project,
+          'collection': collection,
+          'appid': appid,
+          'id': id,
+        },
+      );
 
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        return false;
+      if (kDebugMode) {
+        print('API Status Code: ${response.statusCode}');
+        print('API Response Body: ${response.body}');
       }
+
+      return response.statusCode == 200;
     } catch (e) {
+      if (kDebugMode) {
+        print('Error in updateId: $e');
+      }
       return false;
     }
   }

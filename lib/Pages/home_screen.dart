@@ -8,8 +8,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:memory_stitch/Model/memory_model.dart';
 
-
-
 // class HomePage extends StatefulWidget {
 //   @override
 //   _HomePageState createState() => _HomePageState();
@@ -114,7 +112,7 @@
 //               style: GoogleFonts.poppins(color: Colors.white),
 //             ),
 //             centerTitle: true,
-//             automaticallyImplyLeading: false, 
+//             automaticallyImplyLeading: false,
 //           ),
 //         ),
 //       ),
@@ -417,7 +415,7 @@ import 'package:memory_stitch/Pages/edit_scarpbook.dart';
 import 'package:memory_stitch/Pages/new_input_scarpbook.dart';
 import 'package:memory_stitch/config.dart';
 import 'package:memory_stitch/restapi.dart';
-import 'detail_page.dart';
+import 'detail_page.dart' as detail;
 import 'new_scarpbook.dart';
 
 class HomePage extends StatefulWidget {
@@ -425,7 +423,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final searchKeyword = TextEditingController();
   bool isSearching = false;
   bool isLoading = true;
@@ -440,7 +439,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   String _searchQuery = '';
   String _selectedCategory = 'All';
 
-    Future<void> fetchAllActivities() async {
+  Future<void> fetchAllActivities() async {
     try {
       final response = await ds.selectAll(token, project, 'memory', appid);
       print('Response JSON: $response'); // Debugging response
@@ -457,7 +456,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     }
   }
 
-    void filterActivities(String keyword) {
+//   void onDelete(String id) async {
+//   bool success = await removeId(token, project, 'memory', appid, id);
+//   if (success) {
+//     // Jika berhasil, refresh daftar memory
+//     fetchAllActivities();
+//   } else {
+//     // Tampilkan pesan kesalahan
+//     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//       content: Text('Failed to delete memory. Please try again.'),
+//     ));
+//   }
+// }
+
+
+  void filterActivities(String keyword) {
     setState(() {
       if (keyword.isEmpty) {
         filteredList = List.from(memoriesList);
@@ -470,7 +483,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     });
   }
 
-    void _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -501,14 +514,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _animationController.forward();
   }
 
-
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
-  // ... [Previous methods remain the same] ...
 
   @override
   Widget build(BuildContext context) {
@@ -624,11 +634,59 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       itemBuilder: (context, index) {
                         return MemoryCard(
                           memory: filteredList[index],
-                          onEdit: () {},
-                          onDelete: () async {
-                            // [Previous delete logic remains the same]
+                          onEdit: () {
+
                           },
-                          onDownload: () {},
+                          onDelete: () async { 
+                            try {
+                              setState(() {
+                                isLoading = true; 
+                              });
+
+                              bool success = await ds.removeId(
+                                token,
+                                project,
+                                'memory', // Nama koleksi
+                                appid,
+                                filteredList[index]
+                                    .id, // ID item yang ingin dihapus
+                              );
+
+                              if (success) {
+                                setState(() {
+                                  memoriesList
+                                      .removeAt(index); 
+                                  filteredList.removeAt(
+                                      index); 
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Berhasil menghapus memory')),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Gagal menghapus memory')),
+                                );
+                              }
+                            } catch (e) {
+                              print('Error deleting memory: $e');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Terjadi kesalahan saat menghapus memory')),
+                              );
+                            } finally {
+                              setState(() {
+                                isLoading =
+                                    false; // Sembunyikan loading indicator
+                              });
+                            }
+
+                          },
+                          onDownload: () {
+
+                          },
                         );
                       },
                     ),
@@ -647,7 +705,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NewScrapbookPage()),
+                MaterialPageRoute(
+                    builder: (context) => const NewScrapbookPage()),
               );
             },
             backgroundColor: Color(0xFF8B4513),
@@ -727,15 +786,18 @@ class MemoryCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () {
+            // Debugging: Print memory details
+            print('Navigating to DetailPage with memory: ${memory.judul}, ${memory.tanggal}');
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailPage(
+                builder: (context) => detail.DetailPage(
                   title: memory.judul,
                   date: memory.tanggal,
                   texts: [memory.desc1, memory.desc2, memory.desc3],
                   imagePaths: [memory.pict1, memory.pict2, memory.pict3],
                   templateName: memory.template,
+                  id: memory.id,
                 ),
               ),
             );
@@ -779,24 +841,7 @@ class MemoryCard extends StatelessWidget {
                       onSelected: (value) {
                         switch (value) {
                           case 'Edit':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditScrapbookPage(
-                                  templateIndex: int.parse(memory.template),
-                                  initialTitle: memory.judul,
-                                  initialDesc1: memory.desc1,
-                                  initialDesc2: memory.desc2,
-                                  initialDesc3: memory.desc3,
-                                  initialDate: memory.tanggal,
-                                  initialImagePaths: [
-                                    memory.pict1,
-                                    memory.pict2,
-                                    memory.pict3
-                                  ],
-                                ),
-                              ),
-                            );
+                            onEdit();
                             break;
                           case 'Delete':
                             onDelete();

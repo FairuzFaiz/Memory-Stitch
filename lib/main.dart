@@ -50,7 +50,6 @@
 //ini void main yang bisa dipake
 import 'package:flutter/material.dart';
 import 'package:memory_stitch/Pages/home_screen.dart';
-import 'package:memory_stitch/Pages/login_page.dart';
 import 'package:memory_stitch/Pages/login_email_page.dart';
 import 'package:memory_stitch/Pages/profile_page.dart';
 import 'package:memory_stitch/Pages/register_page.dart';
@@ -102,7 +101,6 @@ class MemoryStitchApp extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
         '/profile_page': (context) => ProfilePage(),
-        '/logout': (context) => LoginPage(),
       },
     );
   }

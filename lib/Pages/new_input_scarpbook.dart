@@ -30,7 +30,8 @@ class _NewInputScrapbookPageState extends State<NewInputScrapbookPage> {
   List<String> _imagePaths = ["-", "-", "-"];
 
   // URL dasar untuk gambar (contoh: server API atau folder lokal)
-  final String fileUri = 'https://io.etter.cloud/v4/upload';
+  final String uploadUri = 'https://io.etter.cloud/v4/upload';
+  String fileUri = "https://file.etter.cloud/d226fd9f5fcf8bc3cbdff22e2bd79efe/";
 
   // Token dan project untuk upload
   final String token = '67072e7f1be56c51cde09d97';
@@ -43,11 +44,12 @@ class _NewInputScrapbookPageState extends State<NewInputScrapbookPage> {
         type: FileType.image,
         withData: true,
       );
+
       if (picked != null) {
         var imageBytes = picked.files.first.bytes!;
         String ext = picked.files.first.extension ?? 'jpg';
 
-        // Panggil fungsi upload
+        // Use uploadUri for the upload process
         String? response = await dataService.upload(
           token,
           project,
@@ -58,13 +60,16 @@ class _NewInputScrapbookPageState extends State<NewInputScrapbookPage> {
         if (response != null) {
           var file = jsonDecode(response);
           setState(() {
-            _imagePaths[index] = file['file_name']; // Simpan nama file
+            _imagePaths[index] = file[
+                'file_name']; // This will be appended to fileUri when displaying
           });
+          print('Image uploaded successfully: ${fileUri + file['file_name']}');
         } else {
           _showSnackBar('Upload failed');
         }
       }
     } catch (e) {
+      print('Upload error: $e');
       _showSnackBar('Error picking image: $e');
     }
   }
@@ -218,9 +223,11 @@ class _NewInputScrapbookPageState extends State<NewInputScrapbookPage> {
             if (_imagePaths[index] != "-")
               Positioned.fill(
                 child: Image.network(
-                  '$fileUri${_imagePaths[index]}',
+                  fileUri + _imagePaths[index], // Using the correct file URL
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
+                    print('Error loading image: $error');
+                    print('Image URL: $fileUri${_imagePaths[index]}');
                     return const Center(
                         child: Icon(Icons.broken_image, size: 50));
                   },
